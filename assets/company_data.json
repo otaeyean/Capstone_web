@@ -1,0 +1,160 @@
+{
+  "stocks": [
+    
+      {
+        "name": "삼성전자",
+        "ticker": "005930",
+        "price": 71800,
+        "change_value": -1200,
+        "rise_percent": 0.0,
+        "fall_percent": 1.64,
+        "quantity": 50,
+        "category": "국내",
+        "description": "Google은 검색 엔진, 클라우드 서비스, AI 개발 등 다양한 기술을 제공하는 글로벌 IT 기업이다."
+      },
+      {
+        "name": "네이버",
+        "ticker": "035420",
+        "price": 187500,
+        "change_value": 500,
+        "rise_percent": 0.27,
+        "fall_percent": 0.0,
+        "quantity": 15,
+        "category": "국내",
+        "description": "Google은 검색 엔진, 클라우드 서비스, AI 개발 등 다양한 기술을 제공하는 글로벌 IT 기업이다."
+      },
+      {
+        "name": "LG전자",
+        "ticker": "066570",
+        "price": 145000,
+        "change_value": -1000,
+        "rise_percent": 0.0,
+        "fall_percent": 0.68,
+        "quantity": 25,
+        "category": "국내",
+        "description": "Google은 검색 엔진, 클라우드 서비스, AI 개발 등 다양한 기술을 제공하는 글로벌 IT 기업이다."
+      },
+      {
+        "name": "Apple",
+        "ticker": "AAPL",
+        "price": 189000,
+        "change_value": 1200,
+        "rise_percent": 0.64,
+        "fall_percent": 0.0,
+        "quantity": 30,
+        "category": "해외",
+        "description": "Google은 검색 엔진, 클라우드 서비스, AI 개발 등 다양한 기술을 제공하는 글로벌 IT 기업이다."
+        
+      },
+      {
+        "name": "Microsoft",
+        "ticker": "MSFT",
+        "price": 320000,
+        "change_value": 2500,
+        "rise_percent": 0.79,
+        "fall_percent": 0.0,
+        "quantity": 18,
+        "category": "해외",
+        "description": "Google은 검색 엔진, 클라우드 서비스, AI 개발 등 다양한 기술을 제공하는 글로벌 IT 기업이다."
+      },
+    {
+      "name": "Google",
+      "ticker": "GOOGL",
+      "price": "2,850,000",
+      "change_value": -15000,
+      "rise_percent": 0.0,
+      "fall_percent": 0.52,
+      "quantity": 10,
+      "category": "해외",
+      "description": "Google은 검색 엔진, 클라우드 서비스, AI 개발 등 다양한 기술을 제공하는 글로벌 IT 기업이다."
+    },
+    {
+      "name": "Amazon",
+      "ticker": "AMZN",
+      "price": "3,100,000",
+      "change_value": 5000,
+      "rise_percent": 0.16,
+      "fall_percent": 0.0,
+      "quantity": 12,
+      "category": "해외",
+      "description": "Amazon은 전자상거래 및 클라우드 서비스 분야에서 세계적인 기업이다."
+    },
+    {
+      "name": "현대자동차",
+      "ticker": "005380",
+      "price": "205,000",
+      "change_value": 3000,
+      "rise_percent": 1.49,
+      "fall_percent": 0.0,
+      "quantity": 40,
+      "category": "국내",
+      "description": "현대자동차는 전 세계적인 자동차 제조업체로, 친환경 차량과 전기차를 개발하고 있다."
+    },
+    {
+      "name": "카카오",
+      "ticker": "035720",
+      "price": "78,000",
+      "change_value": -500,
+      "rise_percent": 0.0,
+      "fall_percent": 0.64,
+      "quantity": 35,
+      "category": "국내",
+      "description": "카카오는 모바일 메신저, 핀테크, 콘텐츠 서비스 등 다양한 IT 사업을 운영하는 기업이다."
+    },
+    {
+      "name": "넷플릭스",
+      "ticker": "NFLX",
+      "price": "450,000",
+      "change_value": -3000,
+      "rise_percent": 0.0,
+      "fall_percent": 1.02,
+      "quantity": 15,
+      "category": "해외",
+      "description": "Netflix는 세계 최대의 온라인 스트리밍 서비스 제공 기업이다."
+    },
+    {
+      "name": "엔비디아",
+      "ticker": "NVDA",
+      "price": "950,000",
+      "change_value": 10000,
+      "rise_percent": 1.05,
+      "fall_percent": 0.0,
+      "quantity": 8,
+      "category": "해외",
+      "description": "NVIDIA는 AI, 그래픽 카드, 데이터 센터 기술을 개발하는 글로벌 기업이다."
+    },
+    {
+      "name": "삼성SDI",
+      "ticker": "006400",
+      "price": "600,000",
+      "change_value": 2000,
+      "rise_percent": 0.33,
+      "fall_percent": 0.0,
+      "quantity": 22,
+      "category": "국내",
+      "description": "삼성SDI는 배터리 및 에너지 솔루션을 개발하는 삼성그룹 계열사이다."
+    },
+    {
+      "name": "SK하이닉스",
+      "ticker": "000660",
+      "price": "130,000",
+      "change_value": -1500,
+      "rise_percent": 0.0,
+      "fall_percent": 1.1,
+      "quantity": 28,
+      "category": "국내",
+      "description": "SK하이닉스는 반도체 메모리 및 시스템 반도체를 제조하는 글로벌 기업이다."
+    },
+    {
+      "name": "페이스북",
+      "ticker": "META",
+      "price": "310,000",
+      "change_value": 2500,
+      "rise_percent": 0.81,
+      "fall_percent": 0.0,
+      "quantity": 14,
+      "category": "해외",
+      "description": "Meta는 소셜 미디어 및 메타버스 기술을 개발하는 글로벌 IT 기업이다."
+    }
+  ]
+}
