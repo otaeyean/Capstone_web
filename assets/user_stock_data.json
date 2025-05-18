@@ -1,0 +1,68 @@
+{
+  "stocks": [
+    {
+      "name": "삼성전자",
+      "ticker": "005930",
+      "price": 71800,
+      "quantity": 50,
+      "rise_percent": 0.64,
+      "fall_percent": 0.0
+    },
+    {
+      "name": "네이버",
+      "ticker": "035420",
+      "price": 187500,
+      "quantity": 15,
+      "rise_percent": 0.64,
+      "fall_percent": 0.0
+    },
+    {
+      "name": "LG전자",
+      "ticker": "066570",
+      "price": 145000,
+      "quantity": 25,
+      "rise_percent": 0.64,
+      "fall_percent": 0.0
+    },
+    {
+      "name": "Apple",
+      "ticker": "AAPL",
+      "price": 189000,
+      "quantity": 30,
+      "rise_percent": 0.64,
+      "fall_percent": 0.0
+    },
+    {
+      "name": "Microsoft",
+      "ticker": "MSFT",
+      "price": 320000,
+      "quantity": 18,
+      "rise_percent": 0.64,
+      "fall_percent": 0.0
+    },
+    {
+      "name": "Tesla",
+      "ticker": "TSLA",
+      "price": 584296,
+      "quantity": 20,
+      "rise_percent": 0.64,
+      "fall_percent": 0.0
+    },
+    {
+      "name": "현대자동차",
+      "ticker": "005380",
+      "price": 205000,
+      "quantity": 40,
+      "rise_percent": 0.64,
+      "fall_percent": 0.0
+    },
+    {
+      "name": "Amazon",
+      "ticker": "AMZN",
+      "price": 3100000,
+      "quantity": 12,
+      "rise_percent": 0.64,
+      "fall_percent": 0.0
+    }
+  ]
+}
