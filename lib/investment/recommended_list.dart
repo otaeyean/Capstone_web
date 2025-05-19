@@ -44,74 +44,75 @@ class _RecommendationTabState extends State<RecommendationTab> {
   @override
   Widget build(BuildContext context) {
     final double screenWidth = MediaQuery.of(context).size.width;
-    final double cardWidth = (screenWidth - 20 * 2 - 16) / 2; // padding & spacing 고려
+    final double horizontalPadding = 20 * 2;
+    final double spacing = 16;
+    final double cardWidth = (screenWidth - horizontalPadding - spacing) / 2;
 
-    return SingleChildScrollView(
-      padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Divider(thickness: 1),
-          SizedBox(height: 12),
-          allCategories.isEmpty
-              ? Center(child: CircularProgressIndicator())
-              : Wrap(
-                  spacing: 16, // 가로 간격
-                  runSpacing: 16, // 세로 간격
-                  children: allCategories.map((categoryName) {
-                    IconData? categoryIcon =
-                        categoryIconMap[categoryName] ?? Icons.category;
-                    Color bgColor = getRandomColor();
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+      child: allCategories.isEmpty
+          ? Center(child: CircularProgressIndicator())
+          : GridView.builder(
+              shrinkWrap: true,
+              physics: NeverScrollableScrollPhysics(),
+              itemCount: allCategories.length,
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2, // 2열 고정
+                mainAxisSpacing: spacing,
+                crossAxisSpacing: spacing,
+                childAspectRatio: cardWidth / 50, // 높이는 적절히 조절 (예: 50)
+              ),
+              itemBuilder: (context, index) {
+                final categoryName = allCategories[index];
+                IconData? categoryIcon =
+                    categoryIconMap[categoryName] ?? Icons.category;
+                Color bgColor = getRandomColor();
 
-                    return Container(
-                      width: cardWidth,
-                      padding: EdgeInsets.symmetric(vertical: 10, horizontal: 12),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(10),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black12,
-                            blurRadius: 4,
-                            offset: Offset(0, 2),
-                          ),
-                        ],
+                return Container(
+                  padding: EdgeInsets.symmetric(vertical: 10, horizontal: 12),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(10),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black12,
+                        blurRadius: 4,
+                        offset: Offset(0, 2),
                       ),
-                      child: Row(
-                        children: [
-                          Container(
-                            width: 28,
-                            height: 28,
-                            decoration: BoxDecoration(
-                              color: bgColor,
-                              shape: BoxShape.circle,
-                            ),
-                            child: Icon(
-                              categoryIcon,
-                              color: Colors.white,
-                              size: 14,
-                            ),
-                          ),
-                          SizedBox(width: 10),
-                          Expanded(
-                            child: Text(
-                              categoryName,
-                              style: TextStyle(
-                                fontSize: 13,
-                                fontWeight: FontWeight.w500,
-                                color: Colors.black,
-                              ),
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ),
-                        ],
+                    ],
+                  ),
+                  child: Row(
+                    children: [
+                      Container(
+                        width: 28,
+                        height: 28,
+                        decoration: BoxDecoration(
+                          color: bgColor,
+                          shape: BoxShape.circle,
+                        ),
+                        child: Icon(
+                          categoryIcon,
+                          color: Colors.white,
+                          size: 14,
+                        ),
                       ),
-                    );
-                  }).toList(),
-                ),
-          SizedBox(height: 30),
-        ],
-      ),
+                      SizedBox(width: 10),
+                      Expanded(
+                        child: Text(
+                          categoryName,
+                          style: TextStyle(
+                            fontSize: 13,
+                            fontWeight: FontWeight.w500,
+                            color: Colors.black,
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              },
+            ),
     );
   }
 }

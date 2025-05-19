@@ -161,22 +161,32 @@ class _UserNewsScreenState extends State<UserNewsScreen> {
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                     child: Row(
                       children: [
-                        ClipRRect(
-                          borderRadius: const BorderRadius.horizontal(left: Radius.circular(12)),
-                          child: newsItem.imageUrl != null
-                              ? Image.network(
-                                  newsItem.imageUrl!,
+                      ClipRRect(
+                      borderRadius: const BorderRadius.horizontal(left: Radius.circular(12)),
+                      child: (newsItem.imageUrl != null && newsItem.imageUrl!.isNotEmpty)
+                          ? Image.network(
+                              newsItem.imageUrl!,
+                              width: 100,
+                              height: 100,
+                              fit: BoxFit.cover,
+                              errorBuilder: (context, error, stackTrace) {
+                                return Image.asset(
+                                  'assets/images/news.jpg',
                                   width: 100,
                                   height: 100,
                                   fit: BoxFit.cover,
-                                )
-                              : Container(
-                                  width: 100,
-                                  height: 100,
-                                  color: Colors.grey[300],
-                                  child: const Icon(Icons.image_not_supported, size: 50),
-                                ),
-                        ),
+                                );
+                              },
+                            )
+                          : Image.asset(
+                              'assets/images/news.jpg',
+                              width: 100,
+                              height: 100,
+                              fit: BoxFit.cover,
+                            ),
+                    ),
+
+
                         const SizedBox(width: 10),
                         Expanded(
                           child: Padding(
