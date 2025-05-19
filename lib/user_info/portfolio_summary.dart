@@ -13,7 +13,6 @@ class CombinedBalanceSummary extends StatefulWidget {
   @override
   State<CombinedBalanceSummary> createState() => _CombinedBalanceSummaryState();
 }
-
 class _CombinedBalanceSummaryState extends State<CombinedBalanceSummary> {
   double balance = 0;
   String totalPurchase = "0 원";
@@ -26,6 +25,9 @@ class _CombinedBalanceSummaryState extends State<CombinedBalanceSummary> {
   final NumberFormat formatter = NumberFormat('#,###');
   final TextEditingController _controller = TextEditingController();
 
+  bool _isSaving = false;
+  String? _inputError;
+
   @override
   void initState() {
     super.initState();
@@ -36,6 +38,7 @@ class _CombinedBalanceSummaryState extends State<CombinedBalanceSummary> {
   @override
   void dispose() {
     _timer?.cancel();
+    _controller.dispose();
     super.dispose();
   }
 
@@ -49,6 +52,8 @@ class _CombinedBalanceSummaryState extends State<CombinedBalanceSummary> {
         totalProfit = "${_formatInt(data['totalProfit'])} 원";
         totalProfitRate = _formatProfitRate(data['totalProfitRate']);
         errorMessage = '';
+        _controller.text = balance.toStringAsFixed(0);
+        _inputError = null;
       });
     } catch (e) {
       setState(() {
@@ -75,138 +80,169 @@ class _CombinedBalanceSummaryState extends State<CombinedBalanceSummary> {
     return "0 %";
   }
 
-  void _updateBalance() async {
+  Future<void> _updateBalance() async {
+    setState(() {
+      _inputError = null;
+    });
+
     double? newBalance = double.tryParse(_controller.text);
-    if (newBalance != null) {
-      bool success = await UserBalanceService().updateBalance(widget.userId, newBalance);
-      if (success) {
-        setState(() {
-          balance = newBalance;
-        });
-      }
+    if (newBalance == null || newBalance < 0) {
+      setState(() {
+        _inputError = "유효한 금액을 입력하세요.";
+      });
+      return;
     }
+
+    setState(() {
+      _isSaving = true;
+    });
+
+    bool success = await UserBalanceService().updateBalance(widget.userId, newBalance);
+    if (success) {
+      setState(() {
+        balance = newBalance;
+        _inputError = null;
+      });
+    } else {
+      setState(() {
+        _inputError = "금액 업데이트에 실패했습니다.";
+      });
+    }
+
+    setState(() {
+      _isSaving = false;
+    });
   }
 
-  void _resetBalance() async {
+  Future<void> _resetBalance() async {
+    setState(() {
+      _isSaving = true;
+      _inputError = null;
+    });
+
     bool success = await UserBalanceService().resetBalance(widget.userId);
     if (success) {
       setState(() {
         balance = 0;
+        _controller.text = '0';
+      });
+    } else {
+      setState(() {
+        _inputError = "초기화에 실패했습니다.";
       });
     }
-  }
 
-  void _showBalanceInputDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          backgroundColor: Colors.white,
-          title: Text("금액 입력", style: TextStyle(color: Colors.black)),
-          content: TextField(
-            controller: _controller,
-            keyboardType: TextInputType.number,
-            decoration: InputDecoration(
-              hintText: "금액을 입력하세요",
-              hintStyle: TextStyle(color: Colors.black45),
-            ),
-            style: TextStyle(color: Colors.black),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: Text("취소", style: TextStyle(color: Colors.black)),
-            ),
-            TextButton(
-              onPressed: () {
-                _updateBalance();
-                Navigator.pop(context);
-              },
-              child: Text("확인", style: TextStyle(color: Colors.blue)),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  void _confirmResetBalance(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          backgroundColor: Colors.white,
-          title: Text("금액 초기화", style: TextStyle(color: Colors.black)),
-          content: Text("설정해놓으신 금액이 초기화됩니다. 진행하시겠습니까?", style: TextStyle(color: Colors.black)),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: Text("취소", style: TextStyle(color: Colors.black)),
-            ),
-            TextButton(
-              onPressed: () {
-                _resetBalance();
-                Navigator.pop(context);
-              },
-              child: Text("확인", style: TextStyle(color: Colors.red)),
-            ),
-          ],
-        );
-      },
-    );
+    setState(() {
+      _isSaving = false;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.symmetric(vertical: 24, horizontal: 20),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [Color(0xFF001F3F), Color(0xFF003366)],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-        borderRadius: BorderRadius.circular(24),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black26,
-            offset: Offset(0, 6),
-            blurRadius: 12,
-          ),
-        ],
-      ),
+    return SingleChildScrollView(
+      padding: EdgeInsets.symmetric(vertical: 50, horizontal: 24),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text("보유 금액", style: TextStyle(color: Colors.white70, fontSize: 16)),
-                  SizedBox(height: 6),
-                  Text("${formatter.format(balance)} 원", style: TextStyle(color: Colors.white, fontSize: 30, fontWeight: FontWeight.bold)),
-                ],
+          Text(
+            "보유 금액 설정",
+            style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.black87),
+          ),
+          const SizedBox(height: 12),
+          TextField(
+            controller: _controller,
+            keyboardType: TextInputType.number,
+            decoration: InputDecoration(
+              labelText: "금액 입력",
+              hintText: "금액을 입력하세요",
+              errorText: _inputError,
+              filled: true,
+              fillColor: Colors.grey.shade100,
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide.none,
               ),
-              Row(
-                children: [
-                  _iconButton(FontAwesomeIcons.gear, "금액설정", Color(0xFF64C38C), () => _showBalanceInputDialog(context), true),
-                  SizedBox(width: 10),
-                  _iconButton(FontAwesomeIcons.arrowRotateLeft, "초기화", Colors.redAccent, () => _confirmResetBalance(context)),
-                ],
-              )
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide(color: Colors.blue, width: 2),
+              ),
+              contentPadding: EdgeInsets.symmetric(vertical: 16, horizontal: 20),
+            ),
+            style: TextStyle(fontSize: 18),
+            enabled: !_isSaving,
+          ),
+          const SizedBox(height: 16),
+          Row(
+            children: [
+              Expanded(
+                child: OutlinedButton(
+                  onPressed: _isSaving ? null : _updateBalance,
+                  style: OutlinedButton.styleFrom(
+                    side: BorderSide(color: Colors.blue, width: 2),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    padding: EdgeInsets.symmetric(vertical: 14),
+                  ),
+                  child: _isSaving
+                      ? SizedBox(
+                          height: 20,
+                          width: 20,
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        )
+                      : Text('저장', style: TextStyle(fontSize: 16, color: Colors.blue)),
+                ),
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: OutlinedButton(
+                  onPressed: _isSaving ? null : _resetBalance,
+                  style: OutlinedButton.styleFrom(
+                    side: BorderSide(color: Colors.red, width: 2),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    padding: EdgeInsets.symmetric(vertical: 14),
+                  ),
+                  child: Text('초기화', style: TextStyle(fontSize: 16, color: Colors.red)),
+                ),
+              ),
             ],
           ),
-          SizedBox(height: 20),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              _buildInfoColumn(FontAwesomeIcons.cartShopping, "총매입", totalPurchase),
-              _buildInfoColumn(FontAwesomeIcons.chartLine, "총평가", totalEvaluation),
-              _buildInfoColumn(FontAwesomeIcons.coins, "총손익", totalProfit),
-              _buildInfoColumn(FontAwesomeIcons.percent, "수익률", totalProfitRate),
-            ],
+          const SizedBox(height: 32),
+          Container(
+            padding: EdgeInsets.all(24),
+            decoration: BoxDecoration(
+              color: Colors.blueGrey.shade900,
+              borderRadius: BorderRadius.circular(20),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black26,
+                  offset: Offset(0, 6),
+                  blurRadius: 12,
+                ),
+              ],
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text("현재 보유 금액", style: TextStyle(color: Colors.white70, fontSize: 16)),
+                const SizedBox(height: 6),
+                Text("${formatter.format(balance)} 원",
+                    style: TextStyle(color: Colors.white, fontSize: 32, fontWeight: FontWeight.bold)),
+                if (errorMessage.isNotEmpty)
+                  Padding(
+                    padding: const EdgeInsets.only(top: 12),
+                    child: Text(errorMessage, style: TextStyle(color: Colors.redAccent)),
+                  ),
+                const SizedBox(height: 20),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    _buildInfoColumn(FontAwesomeIcons.cartShopping, "총매입", totalPurchase),
+                    _buildInfoColumn(FontAwesomeIcons.chartLine, "총평가", totalEvaluation),
+                    _buildInfoColumn(FontAwesomeIcons.coins, "총손익", totalProfit),
+                    _buildInfoColumn(FontAwesomeIcons.percent, "수익률", totalProfitRate),
+                  ],
+                ),
+              ],
+            ),
           ),
         ],
       ),
@@ -241,24 +277,4 @@ class _CombinedBalanceSummaryState extends State<CombinedBalanceSummary> {
     );
   }
 
-  Widget _iconButton(IconData icon, String label, Color color, VoidCallback onTap, [bool greenStyle = false]) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: EdgeInsets.symmetric(vertical: 6, horizontal: 12),
-        decoration: BoxDecoration(
-          color: greenStyle ? Color(0xFF64C38C).withOpacity(0.15) : Colors.white.withOpacity(0.15),
-          borderRadius: BorderRadius.circular(8),
-          border: greenStyle ? Border.all(color: Color(0xFF64C38C).withOpacity(0.5)) : null,
-        ),
-        child: Row(
-          children: [
-            FaIcon(icon, color: color, size: 14),
-            SizedBox(width: 4),
-            Text(label, style: TextStyle(color: color, fontSize: 12, fontWeight: FontWeight.w500)),
-          ],
-        ),
-      ),
-    );
-  }
 }

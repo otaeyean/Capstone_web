@@ -62,99 +62,86 @@ class UserInfoScreenState extends State<UserInfoScreen> {
   @override
   Widget build(BuildContext context) {
     return userId.isEmpty
-        ? Center(child: CircularProgressIndicator())
+        ? const Center(child: CircularProgressIndicator())
         : Scaffold(
-            backgroundColor: const Color(0xFFF5F5F5),
-            // ✅ AppBar 추가 (투명 배경, 뒤로가기 버튼)
-            appBar: AppBar(
-              backgroundColor: Colors.transparent,
-              elevation: 0,
-              leading: IconButton(
-                icon: const Icon(Icons.arrow_back, color: Colors.white),
-                onPressed: () => Navigator.pop(context),
-              ),
-            ),
-            extendBodyBehindAppBar: true,
-            body: SingleChildScrollView(
-              child: Column(
+            backgroundColor: Colors.white,
+            body: SafeArea(
+              child: Row(
                 children: [
-                  // ✅ 상단 배경 + 감성 효과
-                  Stack(
-                    children: [
-                      Container(
-                        width: double.infinity,
-                        height: 250,
-                        decoration: const BoxDecoration(
-                          gradient: LinearGradient(
-                            colors: [
-                              Color(0xFF64C38C),
-                              Color(0xFF3CB98E),
-                              Color(0xFF1E8C74),
+                  // 왼쪽 영역
+                  Expanded(
+                    flex: 2,
+                    child: Padding(
+                      padding: const EdgeInsets.all(24.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              UserProfile(userId: userId),
+                              const Spacer(),
+                              IconButton(
+                                icon: const Icon(Icons.logout, color: Colors.grey),
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                },
+                              ),
                             ],
-                            begin: Alignment.topLeft,
-                            end: Alignment.bottomRight,
                           ),
-                          borderRadius: BorderRadius.vertical(
-                            bottom: Radius.circular(24),
-                          ),
-                        ),
+                          const SizedBox(height: 24),
+                            Padding(
+                            padding: const EdgeInsets.all(20.0),
+                            child: Column(
+                            children: [
+                              CombinedBalanceSummary(userId: userId),
+                              const SizedBox(height: 16),  // 간격
+                              AchievementRateWidget(userId: userId),  // 여기 추가
+                            ],
+                            ),
+                            ),
+                          
+                        ],
                       ),
-                      Positioned(top: 40, left: 30, child: _circleDot(20, Colors.white.withOpacity(0.2))),
-                      Positioned(top: 80, right: 40, child: _circleDot(14, Colors.white.withOpacity(0.15))),
-                      Positioned(bottom: 40, right: 60, child: _circleDot(26, Colors.white.withOpacity(0.1))),
-                      Positioned(bottom: 60, left: 50, child: _circleDot(10, Colors.white.withOpacity(0.25))),
-                      Padding(
-                        padding: const EdgeInsets.only(left: 15, top: 90), // AppBar 공간 고려해 90으로 조정
-                        child: Align(
-                          alignment: Alignment.topLeft,
-                          child: UserProfile(userId: userId),
-                        ),
-                      ),
-                    ],
+                    ),
                   ),
 
-              Transform.translate(
-                offset: const Offset(0, -30),
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                  child: Column(
-                    children: [
-                      CombinedBalanceSummary(userId: userId),
-                      const SizedBox(height: 16),
-                      AchievementRateWidget(userId: userId), // 여기에 AchievementRateWidget을 사용
-                    ],
-                  ),
+                  // 중앙 구분선
+                 Container(
+                  width: 1,
+                  color: Colors.grey.shade300,
+                  margin: const EdgeInsets.symmetric(vertical: 40),
                 ),
-              ),
 
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                    child: Column(
-                      children: [
-                        const SizedBox(height: 16),
-                        SortDropdown(
-                          stocks: _userStocks,
-                          onSortChanged: _onSortChanged,
-                        ),
-                        const SizedBox(height: 10),
-                        MyStockList(stocks: _userStocks),
-                      ],
+                  // 오른쪽 영역
+                  Expanded(
+                    flex: 3,
+                    child: Padding(
+                      padding: const EdgeInsets.all(24.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              const Text(
+                                "내 종목 목록",
+                                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                              ),
+                              SortDropdown(
+                                stocks: _userStocks,
+                                onSortChanged: _onSortChanged,
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 12),
+                          MyStockList(stocks: _userStocks),
+                        ],
+                      ),
                     ),
                   ),
                 ],
               ),
             ),
           );
-  }
-
-  Widget _circleDot(double size, Color color) {
-    return Container(
-      width: size,
-      height: size,
-      decoration: BoxDecoration(
-        color: color,
-        shape: BoxShape.circle,
-      ),
-    );
   }
 }

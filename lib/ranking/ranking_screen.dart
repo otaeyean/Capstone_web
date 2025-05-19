@@ -125,103 +125,104 @@ class _RankingScreenState extends State<RankingScreen> {
       topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
     );
   }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: isLoading
-          ? Center(child: CircularProgressIndicator())
-          : SafeArea(
-              child: SingleChildScrollView(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      SizedBox(height: 30),
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Expanded(
-                            child: Container(
-                              padding: EdgeInsets.symmetric(vertical: 20, horizontal: 16),
-                              decoration: BoxDecoration(
-                                color: Colors.transparent,
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  SizedBox(width: 120),
-                                  Text(
-                                    '현재 $userId 님의 총 수입은',
-                                    style: TextStyle(
-                                      fontFamily: 'MinSans',
-                                      fontWeight: FontWeight.w800,
-                                      fontSize: 28,
-                                      color: Colors.black,
-                                    ),
+@override
+Widget build(BuildContext context) {
+  return Scaffold(
+    backgroundColor: const Color.fromARGB(255, 255, 254, 254), // 🔹 흰색 배경 지정
+    body: isLoading
+        ? Center(child: CircularProgressIndicator())
+        : SafeArea(
+            child: SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    SizedBox(height: 30),
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Expanded(
+                          child: Container(
+                            padding: EdgeInsets.symmetric(vertical: 20, horizontal: 16),
+                            decoration: BoxDecoration(
+                              color: Colors.transparent,
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                SizedBox(width: 120),
+                                Text(
+                                  '현재 $userId 님의 총 수입은',
+                                  style: TextStyle(
+                                    fontFamily: 'MinSans',
+                                    fontWeight: FontWeight.w800,
+                                    fontSize: 28,
+                                    color: Colors.black,
                                   ),
-                                  SizedBox(height: 8),
-                                  Text(
-                                    '${totalProfit?.toStringAsFixed(0) ?? '-'}원 입니다',
-                                    style: TextStyle(
-                                      fontFamily: 'MinSans',
-                                      fontWeight: FontWeight.w800,
-                                      fontSize: 35,
-                                      color: totalProfit != null && totalProfit! > 0
-                                          ? Colors.green
-                                          : Colors.blue,
-                                    ),
+                                ),
+                                SizedBox(height: 8),
+                                Text(
+                                  '${totalProfit?.toStringAsFixed(0) ?? '-'}원 입니다',
+                                  style: TextStyle(
+                                    fontFamily: 'MinSans',
+                                    fontWeight: FontWeight.w800,
+                                    fontSize: 35,
+                                    color: totalProfit != null && totalProfit! > 0
+                                        ? Colors.green
+                                        : Colors.blue,
                                   ),
-                                ],
-                              ),
+                                ),
+                              ],
                             ),
                           ),
-                          SizedBox(width: 16),
-                          if (userStocks.isNotEmpty)
-                            SingleChildScrollView(
-                              scrollDirection: Axis.horizontal,
-                              child: Padding(
-                                padding: const EdgeInsets.symmetric(vertical: 16.0),
-                                child: Container(
-                                  width: userStocks.length * 70,
-                                  height: 250,
-                                  padding: EdgeInsets.all(16),
-                                  child: BarChart(
-                                    BarChartData(
-                                      borderData: FlBorderData(show: false),
-                                      titlesData: _buildTitlesData(),
-                                      gridData: FlGridData(show: false),
-                                      barGroups: _buildBarChartData(),
-                                      groupsSpace: 60,
-                                    ),
+                        ),
+                        SizedBox(width: 16),
+                        if (userStocks.isNotEmpty)
+                          SingleChildScrollView(
+                            scrollDirection: Axis.horizontal,
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 16.0),
+                              child: Container(
+                                width: userStocks.length * 70,
+                                height: 250,
+                                padding: EdgeInsets.all(16),
+                                child: BarChart(
+                                  BarChartData(
+                                    borderData: FlBorderData(show: false),
+                                    titlesData: _buildTitlesData(),
+                                    gridData: FlGridData(show: false),
+                                    barGroups: _buildBarChartData(),
+                                    groupsSpace: 60,
                                   ),
                                 ),
                               ),
                             ),
-                        ],
-                      ),
-                      SizedBox(height: 8),
-                      ListView.builder(
-                        shrinkWrap: true,
-                        physics: NeverScrollableScrollPhysics(),
-                        itemCount: rankings.length,
-                        itemBuilder: (context, index) {
-                          final item = rankings[index];
-                          return RankingTile(
-                            rank: index + 1,
-                            userId: item['userId'],
-                            profit: item['totalProfit'],
-                          );
-                        },
-                      ),
-                      SizedBox(height: 24),
-                    ],
-                  ),
+                          ),
+                      ],
+                    ),
+                    SizedBox(height: 8),
+                    ListView.builder(
+                      shrinkWrap: true,
+                      physics: NeverScrollableScrollPhysics(),
+                      itemCount: rankings.length,
+                      itemBuilder: (context, index) {
+                        final item = rankings[index];
+                        return RankingTile(
+                          rank: index + 1,
+                          userId: item['userId'],
+                          profit: item['totalProfit'],
+                        );
+                      },
+                    ),
+                    SizedBox(height: 24),
+                  ],
                 ),
               ),
             ),
-    );
-  }
+          ),
+  );
+}
+
 }
