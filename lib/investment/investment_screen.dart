@@ -246,16 +246,7 @@ Future<List<Map<String, dynamic>>> fetchWatchlistData(String userId) async {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Center(
-                          child: Text(
-                            "StockList",
-                            style: TextStyle(
-                              fontSize: 24,
-                              fontWeight: FontWeight.bold,
-                              color: Color(0xFF03314B),
-                            ),
-                          ),
-                        ),
+                     
                         SizedBox(height: 16),
                         isSearchLoading
                             ? Center(child: CircularProgressIndicator())

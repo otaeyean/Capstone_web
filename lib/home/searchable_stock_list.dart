@@ -43,19 +43,20 @@ class _SearchableStockListState extends State<SearchableStockList> {
           controller: _controller,
           onChanged: _filterStocks,
           decoration: InputDecoration(
-            hintText: '원하는 종목을 검색해보세요', // ✅ 힌트 텍스트
+            hintText: '원하는 종목을 검색해보세요',
             hintStyle: TextStyle(color: Colors.grey),
             prefixIcon: Icon(Icons.search, color: Colors.grey),
+            filled: true, // ✅ 흰 배경
+            fillColor: Colors.white, // ✅ 흰 배경
             enabledBorder: OutlineInputBorder(
               borderSide: BorderSide(color: Colors.grey),
               borderRadius: BorderRadius.circular(12),
             ),
             focusedBorder: OutlineInputBorder(
-              borderSide: BorderSide(color: Colors.green, width: 2), // ✅ 초록색 테두리
+              borderSide: BorderSide(color: Colors.green, width: 2),
               borderRadius: BorderRadius.circular(12),
             ),
-            contentPadding:
-                EdgeInsets.symmetric(vertical: 18, horizontal: 16),
+            contentPadding: EdgeInsets.symmetric(vertical: 18, horizontal: 16),
           ),
           style: TextStyle(fontSize: 16),
         ),
@@ -92,7 +93,8 @@ class _SearchableStockListState extends State<SearchableStockList> {
                       context,
                       MaterialPageRoute(
                         builder: (context) => StockDetailScreen(
-                            stock: filteredStocks[index]),
+                          stock: filteredStocks[index],
+                        ),
                       ),
                     );
                   },
