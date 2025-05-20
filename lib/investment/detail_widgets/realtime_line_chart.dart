@@ -1,5 +1,5 @@
-import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:graphic/graphic.dart';
 
 class RealTimeLineChart extends StatelessWidget {
   final List<double> prices;
@@ -16,14 +16,12 @@ class RealTimeLineChart extends StatelessWidget {
       );
     }
 
-    double min = prices.reduce((a, b) => a < b ? a : b);
-    double max = prices.reduce((a, b) => a > b ? a : b);
-    double center = (min + max) / 2;
-    double minY = center - 500;
-    double maxY = center + 500;
-    double yInterval = ((maxY - minY) / 5).roundToDouble();
+    final List<Map<String, num>> chartData = List.generate(prices.length, (i) {
+      return {'x': i, 'y': prices[i]};
+    });
 
     return Container(
+      padding: const EdgeInsets.all(8),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(12),
         gradient: const LinearGradient(
@@ -32,71 +30,29 @@ class RealTimeLineChart extends StatelessWidget {
           end: Alignment.bottomRight,
         ),
       ),
-      child: LineChart(
-        LineChartData(
-          minY: minY,
-          maxY: maxY,
-          titlesData: FlTitlesData(
-            leftTitles: AxisTitles(
-              sideTitles: SideTitles(
-                showTitles: true,
-                interval: yInterval,
-                reservedSize: 48,
-                getTitlesWidget: (value, _) => Text(
-                  value.toStringAsFixed(0),
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 12,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-            ),
-            bottomTitles: AxisTitles(
-              sideTitles: SideTitles(showTitles: false),
-            ),
-            topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
-            rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+      child: Chart(
+        data: chartData,
+        variables: {
+          'x': Variable(
+            accessor: (Map<String, num> map) => map['x']!,
+            scale: LinearScale(min: 0),
           ),
-          gridData: FlGridData(
-            show: true,
-            horizontalInterval: yInterval,
-            getDrawingHorizontalLine: (_) => FlLine(
-              color: Colors.white10,
-              strokeWidth: 0.5,
-            ),
-            getDrawingVerticalLine: (_) => FlLine(
-              color: Colors.white10,
-              strokeWidth: 0.5,
-            ),
+          'y': Variable(
+            accessor: (Map<String, num> map) => map['y']!,
+            scale: LinearScale(),
           ),
-          borderData: FlBorderData(show: false),
-          lineBarsData: [
-            LineChartBarData(
-              spots: List.generate(
-                prices.length,
-                (i) => FlSpot(i.toDouble(), prices[i]),
-              ),
-              isCurved: true,
-              barWidth: 2.5,
-              gradient: const LinearGradient(
-                colors: [Color(0xFF4FC3F7), Color(0xFF4FC3F7)],
-              ),
-              belowBarData: BarAreaData(
-                show: true,
-                gradient: LinearGradient(
-                  colors: [
-                    Color(0xFF81D4FA).withOpacity(0.25),
-                    Colors.transparent,
-                  ],
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                ),
-              ),
-              dotData: FlDotData(show: false),
-            ),
-          ],
-        ),
+        },
+        marks: [
+          LineMark(
+            position: Varset('x') * Varset('y'),
+            color: ColorEncode(value: Colors.cyanAccent),
+            shape: ShapeEncode(value: BasicLineShape()),
+          ),
+        ],
+        axes: [
+          Defaults.horizontalAxis,
+          Defaults.verticalAxis,
+        ],
       ),
     );
   }

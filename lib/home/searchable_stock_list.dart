@@ -46,8 +46,8 @@ class _SearchableStockListState extends State<SearchableStockList> {
             hintText: '원하는 종목을 검색해보세요',
             hintStyle: TextStyle(color: Colors.grey),
             prefixIcon: Icon(Icons.search, color: Colors.grey),
-            filled: true, // ✅ 흰 배경
-            fillColor: Colors.white, // ✅ 흰 배경
+            filled: true,
+            fillColor: Colors.white,
             enabledBorder: OutlineInputBorder(
               borderSide: BorderSide(color: Colors.grey),
               borderRadius: BorderRadius.circular(12),
@@ -83,18 +83,37 @@ class _SearchableStockListState extends State<SearchableStockList> {
               shrinkWrap: true,
               itemCount: filteredStocks.length,
               itemBuilder: (context, index) {
+                final selected = filteredStocks[index];
+
+                // ✅ 가격 및 변동률 필드 보강
+                final enrichedStock = {
+                  ...selected,
+                  'currentPrice': selected['stockCurrentPrice'] ??
+                      selected['currentPrice'] ??
+                      selected['price'] ??
+                      0,
+                  'changeRate': selected['stockChangePercent'] ??
+                      selected['changeRate'] ??
+                      selected['rise_percent'] ??
+                      selected['fall_percent'] ??
+                      0,
+                  'tradeVolume': selected['acml_vol'] ??
+                      selected['tradeVolume'] ??
+                      0,
+                };
+
                 return ListTile(
                   title: Text(
-                    filteredStocks[index]['stockName']!,
+                    enrichedStock['stockName'] ?? '이름 없음',
                     style: TextStyle(fontWeight: FontWeight.w500),
                   ),
                   onTap: () {
+                    print("🔍 선택된 검색 결과: $selected"); // 이 줄을 추가!
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => StockDetailScreen(
-                          stock: filteredStocks[index],
-                        ),
+                        builder: (context) =>
+                            StockDetailScreen(stock: enrichedStock),
                       ),
                     );
                   },

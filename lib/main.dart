@@ -22,7 +22,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'WithYou모바일',
+      title: 'WithYou',
       theme: ThemeData(
         fontFamily: 'NotoSans',
         primarySwatch: Colors.blue,

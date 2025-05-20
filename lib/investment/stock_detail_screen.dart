@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:stockapp/investment/detail_widgets/realtimetrade.dart';
 import 'package:stockapp/server/SharedPreferences/user_nickname.dart';
 import './detail_widgets/stock_change_info.dart';
 import 'chart/chart_main.dart';
@@ -26,6 +25,7 @@ class _StockDetailScreenState extends State<StockDetailScreen> with SingleTicker
   bool isLoading = true;
   String? companyDescription;
   late TabController _tabController;
+  Map<String, dynamic> _fetchedPriceData = {};
 
   @override
   void initState() {
@@ -33,12 +33,7 @@ class _StockDetailScreenState extends State<StockDetailScreen> with SingleTicker
     _tabController = TabController(length: 3, vsync: this);
     _loadFavoriteStatus();
     _fetchCompanyDescription();
-  }
-
-  @override
-  void dispose() {
-    _tabController.dispose();
-    super.dispose();
+    _fetchPriceData();
   }
 
   Future<void> _fetchCompanyDescription() async {
@@ -53,6 +48,20 @@ class _StockDetailScreenState extends State<StockDetailScreen> with SingleTicker
         companyDescription = '회사 소개를 불러오는 데 실패했습니다.';
         isLoading = false;
       });
+    }
+  }
+
+  Future<void> _fetchPriceData() async {
+    final stockCode = widget.stock['stockCode'];
+    try {
+      final response = await http.get(Uri.parse('http://withyou.me:8080/current-price?stockCode=$stockCode'));
+      if (response.statusCode == 200) {
+        setState(() {
+          _fetchedPriceData = jsonDecode(response.body);
+        });
+      }
+    } catch (e) {
+      print('❌ 가격 데이터 요청 실패: $e');
     }
   }
 
@@ -103,19 +112,19 @@ class _StockDetailScreenState extends State<StockDetailScreen> with SingleTicker
     final screenWidth = MediaQuery.of(context).size.width;
 
     final stock = {
-      'name': widget.stock['stockName'] ?? '이름 없음',
-      'price': widget.stock['currentPrice'].toString(),
-      'rise_percent': _parseDouble(widget.stock['changeRate']),
-      'fall_percent': _parseDouble(widget.stock['changeRate']),
-      'quantity': widget.stock['tradeVolume'] ?? 0,
+      'name': widget.stock['stockName'] ?? widget.stock['name'] ?? '이름 없음',
+      'price': _fetchedPriceData['stockPrice'] ?? widget.stock['currentPrice'] ?? widget.stock['price'] ?? 0,
+      'rise_percent': _parseDouble(_fetchedPriceData['changeRate'] ?? widget.stock['changeRate'] ?? widget.stock['rise_percent']),
+      'fall_percent': _parseDouble(_fetchedPriceData['changeRate'] ?? widget.stock['changeRate'] ?? widget.stock['fall_percent']),
+      'quantity': widget.stock['tradeVolume'] ?? widget.stock['quantity'] ?? 0,
       'stockCode': widget.stock['stockCode'] ?? '',
     };
+
     final stockCode = stock['stockCode'];
 
     return DefaultTabController(
       length: 3,
       child: Scaffold(
-        // ✅ Scaffold 기본 여백 제거를 위해 resizeToAvoidBottomInset false
         resizeToAvoidBottomInset: false,
         appBar: AppBar(
           backgroundColor: Colors.white,
@@ -139,18 +148,16 @@ class _StockDetailScreenState extends State<StockDetailScreen> with SingleTicker
         ),
         body: Column(
           children: [
-            // ✅ 상단 현재가 정보와 변화율 (좌측 정렬)
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
               child: Row(
                 children: [
                   StockInfo(stock: stock),
                   SizedBox(width: 10),
-                  StockChangeInfo(stock: stock), // 왼쪽 정렬
+                  StockChangeInfo(stock: stock),
                 ],
               ),
             ),
-            // ✅ Tab 메뉴
             Align(
               alignment: Alignment.centerLeft,
               child: TabBar(
@@ -166,34 +173,19 @@ class _StockDetailScreenState extends State<StockDetailScreen> with SingleTicker
                 indicatorColor: Colors.green,
               ),
             ),
-            // ✅ 본문
             Expanded(
               child: Row(
                 children: [
-                  // ✅ 왼쪽 콘텐츠
                   Expanded(
-                    flex: 6, // ✅ 더 넓게 차지하도록 설정
+                    flex: 6,
                     child: TabBarView(
                       controller: _tabController,
                       children: [
-                        // ✅ 차트 + 실시간 체결
-                        Column(
-                          children: [
-                            // ✅ 캔들차트 높이 확대
-                            Expanded(
-                              flex: 6,
-                              child: StockChartMain(stockCode: stockCode),
-                            ),
-                            // ✅ 실시간 체결 그래프 높이 확대
-                            Expanded(
-                              flex: 4,
-                              child: RealTimePriceChart(stockCode: stockCode),
-                            ),
-                          ],
-                        ),
-                        // ✅ 뉴스 탭
+                        // ✅ 실시간 체결 제거 → 차트만 남김
+                        StockChartMain(stockCode: stockCode),
+
                         NewsScreen(stockName: stock['name']),
-                        // ✅ 회사정보 탭
+
                         SingleChildScrollView(
                           padding: EdgeInsets.all(12),
                           child: Column(
@@ -213,9 +205,8 @@ class _StockDetailScreenState extends State<StockDetailScreen> with SingleTicker
                       ],
                     ),
                   ),
-                  // ✅ 오른쪽 주문창
                   Expanded(
-                    flex: 4, // ✅ 오른쪽도 최대한 채우도록 조정
+                    flex: 4,
                     child: Container(
                       color: Colors.grey[100],
                       child: MockInvestmentScreen(stockCode: stockCode),
