@@ -37,7 +37,7 @@ class _RealTimePriceChartState extends State<RealTimePriceChart> {
             setState(() {
               prices.add(price);
               if (prices.length > 50) {
-                prices.removeAt(0); // ✨ 앞부분만 제거
+                prices.removeAt(0);
               }
             });
           }
