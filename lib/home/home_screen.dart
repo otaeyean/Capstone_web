@@ -16,6 +16,7 @@ import '../home/my_stock_news.dart';
 import '../chatbot/chatbot_main_screen.dart';
 import '../investment/investment_screen.dart';
 import '../ranking/ranking_screen.dart';
+
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
   @override
@@ -119,7 +120,7 @@ class HomeScreenState extends State<HomeScreen> {
 
     switch (_selectedIndex) {
       case 0:
-        content = _buildHomeContent();  // 기존 홈 화면 UI 함수로 분리하여 호출 (함수만 분리한 거라 클래스 분리는 아님)
+        content = _buildHomeContent();
         break;
       case 1:
         content = InvestmentScreen();
@@ -138,7 +139,7 @@ class HomeScreenState extends State<HomeScreen> {
     }
 
     return Scaffold(
-      backgroundColor: const Color.fromARGB(255, 255, 255, 255),
+      backgroundColor: const Color.fromARGB(255, 244, 248, 244),
       body: Row(
         children: [
           Container(
@@ -194,127 +195,61 @@ class HomeScreenState extends State<HomeScreen> {
       ),
     );
   }
-Widget _buildHomeContent() {
-  return Stack(
-    children: [
-      LayoutBuilder(
-        builder: (context, constraints) {
-          final isWide = constraints.maxWidth > 900;
 
-          Widget content;
+  Widget _buildHomeContent() {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final isWide = constraints.maxWidth > 900;
 
-          if (isWide) {
-            content = Row(
-              children: [
-                Expanded(
-                  flex: 3,
-                  child: ListView(
-                    padding: const EdgeInsets.all(40),
-                    children: [
-                      StockListWidget(stocks: _userStocks),
-                      const SizedBox(height: 40),
-                      const UserNewsScreen(),
-                      const SizedBox(height: 40),
-                      RecommendedStocks(),
-                    ],
-                  ),
-                ),
-                Container(
-                  width: 1,
-                  color: Colors.grey.shade300,
-                  margin: const EdgeInsets.symmetric(vertical: 40),
-                ),
-                Expanded(
-                  flex: 2,
-                  child: Padding(
-                    padding: const EdgeInsets.all(40),
-                    child: StockRanking(),
-                  ),
-                ),
-              ],
-            );
-          } else {
-            content = ListView(
-              padding: const EdgeInsets.all(20),
-              children: [
-                StockListWidget(stocks: _userStocks),
-                const SizedBox(height: 20),
-                const Divider(thickness: 1, color: Colors.grey),
-                const SizedBox(height: 20),
-                const UserNewsScreen(),
-                const SizedBox(height: 20),
-                RecommendedStocks(),
-                const SizedBox(height: 20),
-                const Divider(thickness: 1, color: Colors.grey),
-                const SizedBox(height: 20),
-                StockRanking(),
-              ],
-            );
-          }
-
-          return content;
-        },
-      ),
-      // 👇 카메라 버튼 + 말풍선
-      Positioned(
-        bottom: 30,
-        right: 20,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.end,
-          children: [
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-              margin: const EdgeInsets.only(bottom: 6),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(12),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black26,
-                    blurRadius: 4,
-                    offset: const Offset(2, 2),
-                  ),
-                ],
-              ),
-              child: const Text(
-                '궁금하신 기업이 있으신가요?\n사진 찍어 검색해보세요!',
-                style: TextStyle(
-                  fontSize: 13,
-                  color: Colors.black87,
-                ),
-                textAlign: TextAlign.right,
-              ),
-            ),
-            GestureDetector(
-              onTap: () {
-                // TODO: 카메라 기능 연결
-              },
-              child: Container(
-                width: 65,
-                height: 65,
-                decoration: BoxDecoration(
-                  gradient: const LinearGradient(
-                    colors: [Color(0xFFFA709A), Color(0xFFFEE140)],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                  ),
-                  shape: BoxShape.circle,
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black26,
-                      blurRadius: 6,
-                      offset: const Offset(2, 2),
-                    ),
+        if (isWide) {
+          return Row(
+            children: [
+              Expanded(
+                flex: 3,
+                child: ListView(
+                  padding: const EdgeInsets.all(40),
+                  children: [
+                    StockListWidget(stocks: _userStocks),
+                    const SizedBox(height: 40),
+                    const UserNewsScreen(),
+                    const SizedBox(height: 40),
+                    RecommendedStocks(),
                   ],
                 ),
-                child: const Icon(Icons.camera_alt, color: Colors.white),
               ),
-            ),
-          ],
-        ),
-      ),
-    ],
-  );
-}
-
+              Container(
+                width: 1,
+                color: Colors.grey.shade300,
+                margin: const EdgeInsets.symmetric(vertical: 40),
+              ),
+              Expanded(
+                flex: 2,
+                child: Padding(
+                  padding: const EdgeInsets.all(40),
+                  child: StockRanking(),
+                ),
+              ),
+            ],
+          );
+        } else {
+          return ListView(
+            padding: const EdgeInsets.all(20),
+            children: [
+              StockListWidget(stocks: _userStocks),
+              const SizedBox(height: 20),
+              const Divider(thickness: 1, color: Colors.grey),
+              const SizedBox(height: 20),
+              const UserNewsScreen(),
+              const SizedBox(height: 20),
+              RecommendedStocks(),
+              const SizedBox(height: 20),
+              const Divider(thickness: 1, color: Colors.grey),
+              const SizedBox(height: 20),
+              StockRanking(),
+            ],
+          );
+        }
+      },
+    );
+  }
 }

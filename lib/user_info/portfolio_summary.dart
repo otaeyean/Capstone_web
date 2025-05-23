@@ -13,6 +13,7 @@ class CombinedBalanceSummary extends StatefulWidget {
   @override
   State<CombinedBalanceSummary> createState() => _CombinedBalanceSummaryState();
 }
+
 class _CombinedBalanceSummaryState extends State<CombinedBalanceSummary> {
   double balance = 0;
   String totalPurchase = "0 원";
@@ -136,6 +137,97 @@ class _CombinedBalanceSummaryState extends State<CombinedBalanceSummary> {
       _isSaving = false;
     });
   }
+  
+void _showBalanceDialog() {
+  showDialog(
+    context: context,
+    builder: (_) {
+      return Dialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        child: Container(
+          constraints: BoxConstraints(maxWidth: 400),
+          padding: EdgeInsets.symmetric(horizontal: 24, vertical: 20),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(16),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                "보유 금액 설정",
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                textAlign: TextAlign.center,
+              ),
+              SizedBox(height: 20),
+              TextField(
+                controller: _controller,
+                keyboardType: TextInputType.number,
+                textAlign: TextAlign.center,
+                decoration: InputDecoration(
+                  hintText: "금액 입력",
+                  errorText: _inputError,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  contentPadding: EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+                ),
+                style: TextStyle(fontSize: 18),
+              ),
+              SizedBox(height: 16),
+              Text(
+                "* 초기화는 모든 주식 종목과 보유 금액이 초기화 됩니다.",
+                style: TextStyle(color: Colors.redAccent, fontSize: 13),
+                textAlign: TextAlign.center,
+              ),
+              SizedBox(height: 20),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  // 초기화 버튼
+                  OutlinedButton(
+                    onPressed: _isSaving ? null : () async {
+                      Navigator.of(context).pop(); // 다이얼로그 닫기
+                      await _resetBalance();
+                    },
+                    style: OutlinedButton.styleFrom(
+                      side: BorderSide(color: Colors.red),
+                    ),
+                    child: Text("초기화", style: TextStyle(color: Colors.red)),
+                  ),
+                  // 취소 + 확인 버튼 그룹
+                  Row(
+                    children: [
+                      OutlinedButton(
+                        onPressed: () => Navigator.of(context).pop(),
+                        style: OutlinedButton.styleFrom(
+                          side: BorderSide(color: Colors.blue),
+                        ),
+                        child: Text("취소", style: TextStyle(color: Colors.blue)),
+                      ),
+                      SizedBox(width: 8),
+                      ElevatedButton(
+                        onPressed: _isSaving ? null : () async {
+                          await _updateBalance();
+                          if (_inputError == null) Navigator.of(context).pop();
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.blue,
+                        ),
+                        child: Text("확인", style: TextStyle(color: Colors.white)),
+                      ),
+                    ],
+                  )
+                ],
+              ),
+            ],
+          ),
+        ),
+      );
+    },
+  );
+}
+
 
   @override
   Widget build(BuildContext context) {
@@ -144,68 +236,20 @@ class _CombinedBalanceSummaryState extends State<CombinedBalanceSummary> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Text(
-            "보유 금액 설정",
-            style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.black87),
-          ),
-          const SizedBox(height: 12),
-          TextField(
-            controller: _controller,
-            keyboardType: TextInputType.number,
-            decoration: InputDecoration(
-              labelText: "금액 입력",
-              hintText: "금액을 입력하세요",
-              errorText: _inputError,
-              filled: true,
-              fillColor: Colors.grey.shade100,
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
-                borderSide: BorderSide.none,
-              ),
-              focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
-                borderSide: BorderSide(color: Colors.blue, width: 2),
-              ),
-              contentPadding: EdgeInsets.symmetric(vertical: 16, horizontal: 20),
-            ),
-            style: TextStyle(fontSize: 18),
-            enabled: !_isSaving,
-          ),
-          const SizedBox(height: 16),
           Row(
             children: [
-              Expanded(
-                child: OutlinedButton(
-                  onPressed: _isSaving ? null : _updateBalance,
-                  style: OutlinedButton.styleFrom(
-                    side: BorderSide(color: Colors.blue, width: 2),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                    padding: EdgeInsets.symmetric(vertical: 14),
-                  ),
-                  child: _isSaving
-                      ? SizedBox(
-                          height: 20,
-                          width: 20,
-                          child: CircularProgressIndicator(strokeWidth: 2),
-                        )
-                      : Text('저장', style: TextStyle(fontSize: 16, color: Colors.blue)),
-                ),
+              Text(
+                "보유 금액 설정",
+                style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.black87),
               ),
-              const SizedBox(width: 16),
-              Expanded(
-                child: OutlinedButton(
-                  onPressed: _isSaving ? null : _resetBalance,
-                  style: OutlinedButton.styleFrom(
-                    side: BorderSide(color: Colors.red, width: 2),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                    padding: EdgeInsets.symmetric(vertical: 14),
-                  ),
-                  child: Text('초기화', style: TextStyle(fontSize: 16, color: Colors.red)),
-                ),
+              Spacer(),
+              IconButton(
+                icon: Icon(Icons.edit, color: Colors.blue),
+                onPressed: _showBalanceDialog,
               ),
             ],
           ),
-          const SizedBox(height: 32),
+          SizedBox(height: 32),
           Container(
             padding: EdgeInsets.all(24),
             decoration: BoxDecoration(
@@ -223,7 +267,7 @@ class _CombinedBalanceSummaryState extends State<CombinedBalanceSummary> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text("현재 보유 금액", style: TextStyle(color: Colors.white70, fontSize: 16)),
-                const SizedBox(height: 6),
+                SizedBox(height: 6),
                 Text("${formatter.format(balance)} 원",
                     style: TextStyle(color: Colors.white, fontSize: 32, fontWeight: FontWeight.bold)),
                 if (errorMessage.isNotEmpty)
@@ -231,7 +275,7 @@ class _CombinedBalanceSummaryState extends State<CombinedBalanceSummary> {
                     padding: const EdgeInsets.only(top: 12),
                     child: Text(errorMessage, style: TextStyle(color: Colors.redAccent)),
                   ),
-                const SizedBox(height: 20),
+                SizedBox(height: 20),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
@@ -276,5 +320,4 @@ class _CombinedBalanceSummaryState extends State<CombinedBalanceSummary> {
       ],
     );
   }
-
 }

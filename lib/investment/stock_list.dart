@@ -140,7 +140,7 @@ class _StockListItemState extends State<_StockListItem> {
                     'assets/images/${stock['stockName']}_${stock['stockCode']}.png',
                     fit: BoxFit.cover,
                     errorBuilder: (context, error, stackTrace) {
-                      return Icon(Icons.broken_image, color: Colors.grey, size: 24);
+                      return Icon(Icons.account_balance, color: Colors.grey, size: 24);
                     },
                   ),
                 ),

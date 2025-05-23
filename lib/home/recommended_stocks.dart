@@ -58,7 +58,7 @@ class _RecommendedStocksState extends State<RecommendedStocks> {
         height: 140,
         padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
         decoration: BoxDecoration(
-          color: Colors.white,
+        color: const Color.fromARGB(255, 244, 248, 244), // ✅ 배경색 지정
           borderRadius: BorderRadius.circular(12),
         ),
         child: Column(

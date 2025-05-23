@@ -171,7 +171,7 @@ Widget build(BuildContext context) {
                         fit: BoxFit.contain,
                         errorBuilder: (context, error, stackTrace) {
                           return Icon(
-                            Icons.business,
+                            Icons.account_balance,
                             color: Colors.black45,
                             size: 32,
                           );

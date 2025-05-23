@@ -58,90 +58,92 @@ class UserInfoScreenState extends State<UserInfoScreen> {
       _userStocks = sortedStocks;
     });
   }
-
-  @override
-  Widget build(BuildContext context) {
-    return userId.isEmpty
-        ? const Center(child: CircularProgressIndicator())
-        : Scaffold(
-            backgroundColor: Colors.white,
-            body: SafeArea(
-              child: Row(
-                children: [
-                  // 왼쪽 영역
-                  Expanded(
-                    flex: 2,
-                    child: Padding(
-                      padding: const EdgeInsets.all(24.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
+@override
+Widget build(BuildContext context) {
+  return userId.isEmpty
+      ? const Center(child: CircularProgressIndicator())
+      : Scaffold(
+          backgroundColor: const Color.fromARGB(255, 244, 248, 244),
+          body: SafeArea(
+            child: Column(
+              children: [
+                const SizedBox(height: 130), // ⬅️ 전체 위 여백
+                Expanded(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center, // ⬅️ 가운데 정렬
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // 왼쪽 영역
+                      Expanded(
+                        flex: 2,
+                        child: Padding(
+                          padding: const EdgeInsets.all(24.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              UserProfile(userId: userId),
-                              const Spacer(),
-                              IconButton(
-                                icon: const Icon(Icons.logout, color: Colors.grey),
-                                onPressed: () {
-                                  Navigator.pop(context);
-                                },
+                              Row(
+                                children: [
+                                  UserProfile(userId: userId),
+                                  const Spacer(),
+                                ],
+                              ),
+                              const SizedBox(height: 24),
+                              Padding(
+                                padding: const EdgeInsets.all(20.0),
+                                child: Column(
+                                  children: [
+                                    CombinedBalanceSummary(userId: userId),
+                                    const SizedBox(height: 16),
+                                    AchievementRateWidget(userId: userId),
+                                  ],
+                                ),
                               ),
                             ],
                           ),
-                          const SizedBox(height: 24),
-                            Padding(
-                            padding: const EdgeInsets.all(20.0),
-                            child: Column(
-                            children: [
-                              CombinedBalanceSummary(userId: userId),
-                              const SizedBox(height: 16),  // 간격
-                              AchievementRateWidget(userId: userId),  // 여기 추가
-                            ],
-                            ),
-                            ),
-                          
-                        ],
+                        ),
                       ),
-                    ),
-                  ),
 
-                  // 중앙 구분선
-                 Container(
-                  width: 1,
-                  color: Colors.grey.shade300,
-                  margin: const EdgeInsets.symmetric(vertical: 40),
+                      // 중앙 구분선
+                      Container(
+                        width: 1,
+                        color: Colors.grey.shade300,
+                        margin: const EdgeInsets.symmetric(vertical: 40),
+                      ),
+
+                      // 오른쪽 영역
+                      Expanded(
+                        flex: 3,
+                        child: Padding(
+                          padding: const EdgeInsets.all(24.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  const Text(
+                                    "내 종목 목록",
+                                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                                  ),
+                                  SortDropdown(
+                                    stocks: _userStocks,
+                                    onSortChanged: _onSortChanged,
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 12),
+                              MyStockList(stocks: _userStocks),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-
-                  // 오른쪽 영역
-                  Expanded(
-                    flex: 3,
-                    child: Padding(
-                      padding: const EdgeInsets.all(24.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              const Text(
-                                "내 종목 목록",
-                                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                              ),
-                              SortDropdown(
-                                stocks: _userStocks,
-                                onSortChanged: _onSortChanged,
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 12),
-                          MyStockList(stocks: _userStocks),
-                        ],
-                      ),
-                    ),
-                  ),
-                ],
-              ),
+              ],
             ),
-          );
-  }
+          ),
+        );
+}
+
 }

@@ -155,7 +155,7 @@ class _UserNewsScreenState extends State<UserNewsScreen> {
                 return GestureDetector(
                   onTap: () => launchUrl(Uri.parse(newsItem.link), mode: LaunchMode.externalApplication),
                   child: Card(
-                    color: const Color(0xFFF7F9FC),
+                    color: const Color.fromARGB(255, 255, 255, 255),
                     margin: const EdgeInsets.all(8),
                     elevation: 1,
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
