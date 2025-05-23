@@ -107,6 +107,7 @@ class _ChatbotScreenState extends State<ChatbotScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color.fromARGB(255, 244, 248, 244),
       body: CustomScrollView(
         slivers: [
           SliverToBoxAdapter(

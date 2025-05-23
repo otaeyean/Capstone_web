@@ -128,7 +128,7 @@ class _RankingScreenState extends State<RankingScreen> {
 @override
 Widget build(BuildContext context) {
   return Scaffold(
-    backgroundColor: const Color.fromARGB(255, 255, 254, 254), // 🔹 흰색 배경 지정
+    backgroundColor: const Color.fromARGB(255, 244, 248, 244), // ✅ 배경색 지정
     body: isLoading
         ? Center(child: CircularProgressIndicator())
         : SafeArea(
